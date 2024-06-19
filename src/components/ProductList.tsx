@@ -9,9 +9,11 @@ const PRODUCT_PER_PAGE = 20;
 const ProducList = async ({
   categoryId,
   limit,
+  searchParams,
 }: {
   categoryId: string;
   limit?: number;
+  searchParams?: any;
 }) => {
   const wixClient = await wixClientServer();
   const res = await wixClient.products
