@@ -3,6 +3,7 @@ import { products } from "@wix/stores";
 import Image from "next/image";
 import Link from "next/link";
 import DOMPurify from "isomorphic-dompurify";
+import Pagination from "./Pagination";
 
 const PRODUCT_PER_PAGE = 8;
 
@@ -27,7 +28,12 @@ const ProductList = async ({
     )
     .gt("priceData.price", searchParams?.min || 0)
     .lt("priceData.price", searchParams?.max || 999999)
-    .limit(limit || PRODUCT_PER_PAGE);
+    .limit(limit || PRODUCT_PER_PAGE)
+    .skip(
+      searchParams?.page
+        ? parseInt(searchParams.page) * (limit || PRODUCT_PER_PAGE)
+        : 0
+    );
 
   if (searchParams?.sort) {
     const [sortType, sortBy] = searchParams.sort.split(" ");
@@ -40,8 +46,6 @@ const ProductList = async ({
   }
 
   const res = await productQuery.find();
-
-  console.log("Query result:", res);
 
   return (
     <div className="mt-12 flex gap-x-8 gap-y-16 justify-between flex-wrap">
@@ -90,6 +94,11 @@ const ProductList = async ({
           </button>
         </Link>
       ))}
+      <Pagination
+        currentPage={res.currentPage || 0}
+        hasPrev={res.hasPrev()}
+        hasNext={res.hasNext()}
+      />
     </div>
   );
 };
